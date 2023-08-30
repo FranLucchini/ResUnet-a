@@ -12,3 +12,10 @@ RUN pip --version
 # 2) Actualizar python a 3.7
 
 RUN pip install -r /build/requirements.txt
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+RUN apt update && apt install -y libsm6 libxext6
+RUN apt-get install -y libxrender-dev
+
+# RUN apt-get install libcudnn7=7.4.1.5-1+cuda10.0 -y
+# RUN apt-get install libcudnn7-dev=7.4.1.5-1+cuda10.0 -y

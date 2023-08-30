@@ -10,6 +10,7 @@ class ResUnet(object):
         self.layer_norm = layer_norm
 
     def normalization(self, x, layer_norm):
+        # print(x.shape)
         if layer_norm == 'batch':
             x = BatchNormalization()(x)
         else:
