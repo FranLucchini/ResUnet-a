@@ -67,7 +67,9 @@ elif args.image_size == 448:
 
 resunet_a = ResUnet(args.num_classes, (args.image_size, args.image_size, 3), args.layer_norm)
 model = resunet_a.build_model()
-# print(model.summary())
+
+# # Load the previously saved weights
+# model.load_weights(latest)
 
 metrics_dict = {'segmentation': ['accuracy']}
               
@@ -84,17 +86,9 @@ def generate_minibatches(dataParser, train=True):
         else:
             batch_ids = np.random.choice(dataParser.validation_ids, dataParser.batch_size, replace=False)
         images, labels = dataParser.get_batch(batch_ids)
-        print(images.shape, labels['segmentation'].shape)
+        # print(images.shape, labels['segmentation'].shape)
         yield(images, labels)
-ejemplo = next(generate_minibatches(dataParser))
-ejemplo2=model(ejemplo[0])
-# print(ejemplo[0].shape)
-# print(ejemplo[1]['segmentation'].shape,ejemplo[1]['boundary'].shape,ejemplo[1]['distance'].shape, dataParser.steps_per_epoch) #'segmentation', 'boundary', 'distance'
-#print(ejemplo2['seg'].shape,ejemplo2['bound'].shape,ejemplo2['dist'].shape)#model(ejemplo[0])
-exit()
-# from tensorflow.keras.layers import *
-# input = [(Input(shape=(256,256,3), batch_size=1), Input(shape=(256,256,2), batch_size=1))]
-# model.fit_generator(input, verbose=1)
+
 model.fit_generator(generate_minibatches(dataParser),
                         steps_per_epoch=dataParser.steps_per_epoch,
                         epochs=args.epochs,

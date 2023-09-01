@@ -11,7 +11,8 @@ docker build --force-rm -f resunet.Dockerfile -t resunet .
 docker run --rm -it \
     --gpus all --ipc=host \
     --ulimit memlock=-1 --ulimit stack=67108864 \
-    -v /home/felipe/Cenia-ODEPA/ResUnet-a:/src \
+    -v /home/fran/resunet_data:/resunet_data \
+    -v /home/fran/ResUnet-a:/src \
     resunet bash
 ```
 
@@ -30,9 +31,15 @@ pip install -r requirements.txt
 ```
 python main.py --image_size 256 --batch_size 1 --num_classes 2 --validation_split 0.2 --epochs 100 --image_path ./images --gt_path ./gt --layer_norm batch --model_save_path ./ --checkpoint_mode epochs
 ```
+```
+python main.py --image_size 256 --batch_size 256 --num_classes 2 --validation_split 0.2 --epochs 100 --image_path /resunet_data/images --gt_path /resunet_data/gt --layer_norm batch --model_save_path /resunet_data --checkpoint_mode epochs
+```
 4. To produce model predictions on a directory of test images run script predict.py with the following arguments :
 ```
 python predict.py --image_size 256 --num_classes 2 --image_path ./test --model_path ./model.h5 --output_path ./results
+```
+```
+python predict.py --image_size 256 --num_classes 2 --image_path ./ñuble_imgs --model_path /resunet_data/model_epochs=20.h5 --output_path /resunet_data/output
 ```
 
 ## Results

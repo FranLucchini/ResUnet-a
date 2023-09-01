@@ -130,6 +130,6 @@ class ResUnet(object):
         seg = Conv2D(self.num_classes, 1, activation='softmax', name = 'segmentation')(seg)
 
         model = Model(inputs = input, outputs={'seg': seg, 'bound': bound, 'dist': dist})
-        print(input.shape)
-        print(seg.shape)
+        # print(input.shape)
+        # print(seg.shape)
         return model

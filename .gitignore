@@ -6,3 +6,7 @@ test/
 out/
 model.h5/
 slurm_output/
+resunet_data.zip
+resunet_data/
+ñuble_imgs/
+core
