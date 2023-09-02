@@ -28,18 +28,41 @@ git clone https://github.com/Akhilesh64/ResUnet-a
 pip install -r requirements.txt
 ```
 3. To start model training run the main.py file with following arguments :
+Example folders
 ```
+python main.py --image_size 256 --batch_size 1 --num_classes 2 --epochs 5 \
+               --image_path ./images --val_image_path ./val_images --test_image_path ./test_images \
+               --gt_path ./gt --val_gt_path ./val_gt --test_gt_path ./test_gt \
+               --layer_norm batch --model_save_path ./ --checkpoint_mode epochs
+```
+```
+python main.py --image_size 256 --batch_size 8 --num_classes 2 --epochs 100 \
+               --image_path /resunet_data/imgs_europe/train_img \
+               --val_image_path /resunet_data/imgs_europe/val_img \
+               --test_image_path /resunet_data/imgs_europe/test_img \
+               --gt_path /resunet_data/masks_europe/train_masks \
+               --val_gt_path /resunet_data/masks_europe/val_masks \
+               --test_gt_path /resunet_data/masks_europe/test_masks \
+               --layer_norm batch --model_save_path ./ --checkpoint_mode epochs | tee out.log
+```
+<!-- ```
 python main.py --image_size 256 --batch_size 1 --num_classes 2 --validation_split 0.2 --epochs 100 --image_path ./images --gt_path ./gt --layer_norm batch --model_save_path ./ --checkpoint_mode epochs
 ```
 ```
 python main.py --image_size 256 --batch_size 256 --num_classes 2 --validation_split 0.2 --epochs 100 --image_path /resunet_data/images --gt_path /resunet_data/gt --layer_norm batch --model_save_path /resunet_data --checkpoint_mode epochs
-```
+``` -->
 4. To produce model predictions on a directory of test images run script predict.py with the following arguments :
 ```
 python predict.py --image_size 256 --num_classes 2 --image_path ./test --model_path ./model.h5 --output_path ./results
 ```
 ```
 python predict.py --image_size 256 --num_classes 2 --image_path ./ñuble_imgs --model_path /resunet_data/model_epochs=20.h5 --output_path /resunet_data/output
+```
+```
+python predict.py --image_size 256 --num_classes 2 \
+--image_path /resunet_data/muestra_train \
+--model_path /resunet_data/model_epochs=20.h5 \
+--output_path /resunet_data/muestra_out
 ```
 
 ## Results

@@ -26,14 +26,22 @@ parser.add_argument("--batch_size",
                     help="Batch size for model.", type=int, default=8)
 parser.add_argument("--num_classes",
                     help="Number of classes for the model.", type=int, default=2)
-parser.add_argument("--validation_split",
-                    help="Number of classes for the model.", type=float, default=0.1)
+# parser.add_argument("--validation_split",
+#                     help="Number of classes for the model.", type=float, default=0.1)
 parser.add_argument("--epochs",
                     help="Number of epochs for the model.", type=int, default=200)
 parser.add_argument("--image_path",
                     help="Training images directory path.", type=str, required=True)
 parser.add_argument("--gt_path",
                     help="Training groundtruth directory path.", type = str, required=True)
+parser.add_argument("--val_image_path",
+                    help="Validation images directory path.", type=str, required=True)
+parser.add_argument("--val_gt_path",
+                    help="Validation groundtruth directory path.", type = str, required=True)
+parser.add_argument("--test_image_path",
+                    help="Testing images directory path.", type=str, required=True)
+parser.add_argument("--test_gt_path",
+                    help="Test groundtruth directory path.", type = str, required=True)
 parser.add_argument("--layer_norm",
                     help="Type of normalization for conv layers.", type = str, choices=['batch','instance'], default = 'batch')
 parser.add_argument("--model_save_path",
@@ -70,14 +78,18 @@ model = resunet_a.build_model()
 
 # # Load the previously saved weights
 # model.load_weights(latest)
+mean_iou = tf.keras.metrics.MeanIoU(num_classes=args.num_classes)
 
-metrics_dict = {'segmentation': ['accuracy']}
+metrics_dict = {'segmentation': ['accuracy', mean_iou]}
               
 model.compile(optimizer=Adam(), loss=losses, metrics=metrics_dict)
 
-metrics_names = ['loss', 'seg_loss', 'bound_loss', 'dist_loss', 'seg_accuracy']
+metrics_names = ['loss', 'seg_loss', 'bound_loss', 'dist_loss', 'seg_accuracy', 'seg_mean_iou']
 
-dataParser = DataParser(args.image_path, args.gt_path, label_dict, args.validation_split, args.batch_size, args.image_size, args.num_classes)
+dataParser = DataParser(args.image_path, args.gt_path, label_dict, args.val_image_path, args.val_gt_path,
+                        args.batch_size, args.image_size, args.num_classes)
+testDataParser = DataParser(args.test_image_path, args.test_gt_path,  label_dict, None, None,
+                        args.batch_size, args.image_size, args.num_classes, True)
 
 def generate_minibatches(dataParser, train=True):
     while True:
@@ -88,10 +100,17 @@ def generate_minibatches(dataParser, train=True):
         images, labels = dataParser.get_batch(batch_ids)
         # print(images.shape, labels['segmentation'].shape)
         yield(images, labels)
-
 model.fit_generator(generate_minibatches(dataParser),
                         steps_per_epoch=dataParser.steps_per_epoch,
                         epochs=args.epochs,
                         validation_data=generate_minibatches(dataParser, train=False),
                         validation_steps=dataParser.validation_steps,
                         callbacks=[checkpoint])
+
+print("\nEvaluate on test data")
+results = model.evaluate_generator(
+    generate_minibatches(testDataParser), steps=testDataParser.steps_per_epoch)
+# results = model.evaluate(x_test, y_test, batch_size=args.batch_size)
+for i in range(len(results)):
+    print(metrics_names[i], results[i])
+

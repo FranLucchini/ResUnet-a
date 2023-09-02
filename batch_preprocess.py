@@ -5,24 +5,36 @@ import cv2
 
 class DataParser():
 
-    def __init__(self, img_path, label_path, label_dict, validation_split, batch_size=8, image_size=256, num_classes = 2):
+    def __init__(self, img_path, label_path, label_dict, val_img_path=None, val_label_path=None, batch_size=8, image_size=256, num_classes = 2, Test=False):
         self.img_path = img_path
-        self.label_path = label_path   
+        self.label_path = label_path
+        # Get sorted filenames of folder   
         self.samples = split_pair_names(self.img_path, self.label_path)
+        # Number of samples
         self.n_samples = len(self.samples)
+        # List of IDs
         self.all_ids = list(range(self.n_samples))
         np.random.shuffle(self.all_ids)
-        train_split = 1 - validation_split		
-        self.training_ids = self.all_ids[:int(train_split * self.n_samples)]
-        self.validation_ids = self.all_ids[int(train_split * self.n_samples):]
+        
+        if not Test:
+            # Throw error if validation is not included
+            assert (val_img_path is not None) and (val_label_path is not None)
+            self.val_img_path = val_img_path
+            self.val_label_path = val_label_path
+            self.val_samples = split_pair_names(self.val_img_path, self.val_label_path)
+            self.validation_steps = len(self.val_samples)/(batch_size*2)
+            self.validation_ids = list(range(len(self.val_samples)))
+
+        self.training_ids = list(range(self.n_samples))
         self.batch_size = batch_size
-        self.steps_per_epoch = len(self.training_ids)/batch_size
-        self.validation_steps = len(self.validation_ids)/(batch_size*2)
+        self.steps_per_epoch = self.n_samples/batch_size
         self.image_size = image_size
         self.label_dict = label_dict
         self.num_classes = num_classes
+        self.is_test = Test
 
     def get_batch(self, batch):
+        # batch (list of ids)
 
         images = []
         seg = []
