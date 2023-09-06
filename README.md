@@ -56,13 +56,22 @@ python main.py --image_size 256 --batch_size 256 --num_classes 2 --validation_sp
 python predict.py --image_size 256 --num_classes 2 --image_path ./test --model_path ./model.h5 --output_path ./results
 ```
 ```
-python predict.py --image_size 256 --num_classes 2 --image_path ./ñuble_imgs --model_path /resunet_data/model_epochs=20.h5 --output_path /resunet_data/output
+python predict.py --image_size 256 --num_classes 2 \
+                --image_path /resunet_data/Allbands_18HYE_10m_0.00_0.20_step0.20.nc/ñuble_imgs_matched \
+                --model_path /resunet_data/model_e=50.h5 \
+                --output_path /resunet_data/output
 ```
 ```
 python predict.py --image_size 256 --num_classes 2 \
 --image_path /resunet_data/muestra_train \
---model_path /resunet_data/model_epochs=20.h5 \
+--model_path /resunet_data/model_e=50.h5 \
 --output_path /resunet_data/muestra_out
+```
+```
+python predict.py --image_size 256 --num_classes 2 \
+--image_path /resunet_data/Allbands_18HYE_10m_0.00_0.20_step0.20.nc/ñuble_imgs_matched \
+--model_path /resunet_data/model_e=50.h5 \
+--output_path /resunet_data/ñuble_imgs_matched_out
 ```
 
 ## Results

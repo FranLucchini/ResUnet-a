@@ -11,3 +11,4 @@ resunet_data/
 ñuble_imgs/
 core
 *.log
+model.h5
